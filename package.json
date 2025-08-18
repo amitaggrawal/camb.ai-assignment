@@ -15,7 +15,6 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-dropzone": "^14.3.8",
-    "tailwind": "^4.0.0",
     "wavesurfer-multitrack": "^0.4.12"
   },
   "devDependencies": {
