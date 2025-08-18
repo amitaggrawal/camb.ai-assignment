@@ -95,8 +95,7 @@ function App() {
    inputRef.current?.click() 
   }
 
-  useHotkey('Space', playPauseHandler);
-  useHotkey('Enter', playPauseHandler);
+  useHotkey(['Space','Enter'], playPauseHandler);
 
   return (
     <DragAndDrop
@@ -131,11 +130,12 @@ function App() {
         </div>
       )}
 
-      <div className='flex flex-col gap-4 w-full md:w-11/12 bg-black bg-opacity-50 overflow-scroll rounded-md m-4'>
-        <div className='flex gap-4 relative no-scrollbar h-fit' ref={tracksContainerRef}>
+      <div className={styles.trackWrapper}>
+        <div className={`${styles.tracks} ${styles.noScrollbar}`} ref={tracksContainerRef}>
         {/* To be used by wavesurfer library for displaying waves of uploaded audio files */}
         </div>
       </div>
+      
 
       {audioTracks.length > 0 && (
         <div

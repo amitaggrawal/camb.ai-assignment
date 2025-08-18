@@ -1,9 +1,9 @@
 import {useEffect} from 'react';
 
-export const useHotkey = (key: string, callback: () => void) => {
+export const useHotkey = (key: string[], callback: () => void) => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.code === key) {
+      if (key.includes(event.code)) {
         event.preventDefault();
         callback();
       }

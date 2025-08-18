@@ -54,9 +54,7 @@ const DragAndDrop = forwardRef<InputHandle, DragAndDropProps>(
     useImperativeHandle(ref, () => ({
       click: () => inputRef.current?.click(),      
     }));
-
-    console.log('amit, input props', getInputProps())
-
+    
     return (
       <div className={styles.container} {...getRootProps()}>
         {isDragActive && <h1>Drop your audio files here</h1>}
