@@ -1,8 +1,9 @@
 .container {
   display: flex;
   gap: 1rem;
-  flex-direction: row;
-  justify-content: flex-end;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
 }
 
 .hiddenState {
@@ -29,14 +30,263 @@
 }
 
 .controlButton{
-  padding: 1rem; 
+  padding: 0.75rem; 
   border: 1px solid #c94b4b;
   border-radius: 0.5rem; 
-  width: 3rem;  
-  height: 3rem;
+  width: 2.5rem;  
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: flex-end;
+  cursor: pointer;
+  background: none;
+  color: white;
+  transition: background-color 0.2s ease;
+  margin-left: 1rem;
+}
+
+.controlButton:hover {
+  background-color: rgba(201, 75, 75, 0.2);
+}
+
+/* Per-Track Controls Styles */
+.perTrackControls {
+  margin-top: 0;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(124, 124, 124, 0.2);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.perTrackControls::-webkit-scrollbar {
+  width: 6px;
+}
+
+.perTrackControls::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.perTrackControls::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.perTrackControls::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.perTrackHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(124, 124, 124, 0.3);
+  position: sticky;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1;
+  border-radius: 0.5rem 0.5rem 0 0;
+  margin: 0 0 1rem 0;
+}
+
+.perTrackTitle {
+  color: white;
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.zoomControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+}
+
+.zoomSlider {
+  width: 80px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.zoomSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
   cursor: pointer;
 }
+
+.zoomSlider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+}
+
+.trackControl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background-color: rgba(45, 45, 45, 0.8);
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border: 1px solid rgba(124, 124, 124, 0.3);
+}
+
+.trackInfo {
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.trackName {
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trackControls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.trackControlButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.trackControlButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.trackVolumeControl {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.trackZoomControl {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: white;
+}
+
+.trackMuteButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.trackMuteButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.trackRemoveButton {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.trackRemoveButton:hover {
+  background-color: rgba(255, 107, 107, 0.2);
+  color: #ff5252;
+}
+
+.trackVolumeSlider {
+  width: 60px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.trackVolumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
+
+.trackVolumeSlider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+}
+
+.trackZoomSlider {
+  width: 60px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.trackZoomSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
+
+.trackZoomSlider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+}
+
+/* input[type="range"]::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, #4CAF50 0%, #4CAF50 50%, #ccc 50%, #ccc 100%);
+} */

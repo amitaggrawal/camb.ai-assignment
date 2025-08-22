@@ -7,6 +7,14 @@ import DragAndDrop from './components/DragNDrop/DragNDrop';
 import {ControlPanel, DEFAULT_ZOOM} from './components/ControlPanel/ControlPanel';
 import styles from './App.module.css'
 
+// New types for per-track state management
+interface TrackState {
+  id: string;
+  volume: number;
+  isMuted: boolean;
+  trackOptions: TrackOptions;
+}
+
 const DEFAULT_MULTITRACK_OPTIONS = {
   cursorWidth: 2,
   cursorColor: '#D72F21',
@@ -28,16 +36,14 @@ const DEFAULT_MULTITRACK_OPTIONS = {
   },
 };
 
-
-
 function App() {
-  const [audioTracks, setAudioTracks] = useState<TrackOptions[]>([]);
+  // Replace the simple audioTracks array with detailed track state
+  const [trackStates, setTrackStates] = useState<TrackState[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const tracksContainerRef = useRef<HTMLDivElement>(null);
   const multitrack = useRef<MultiTrack | null>(null);
   const inputRef = useRef<{click: () => void}>(null);
-
 
   const loadTracks = useCallback(
     (newTracks: TrackOptions[]) => {
@@ -47,49 +53,76 @@ function App() {
       if (multitrack.current) {
         multitrack.current.destroy();
       }
-      multitrack.current = MultiTrack.create([...audioTracks, ...newTracks], {
+      multitrack.current = MultiTrack.create([...trackStates.map(ts => ts.trackOptions), ...newTracks], {
         ...DEFAULT_MULTITRACK_OPTIONS,
         container: tracksContainerRef.current,
         minPxPerSec: zoom,
       });
-      setAudioTracks((prevTracks) => [...prevTracks, ...newTracks]);
+      
+      // Reset playing state when tracks are reloaded
+      setIsPlaying(false);
+      
+      setTrackStates((prevTracks) => [...prevTracks, ...newTracks.map(track => ({
+        id: String(track.id || Date.now()),
+        volume: 1,
+        isMuted: false,
+        trackOptions: track,
+      }))]);
     },
-    [audioTracks, zoom],
+    [trackStates, zoom],
   );
 
   const playPauseHandler = useCallback(() => {
-    if (audioTracks.length > 0 && multitrack.current?.isPlaying()) {
+    if (trackStates.length > 0 && multitrack.current?.isPlaying()) {
       multitrack.current?.pause();
       setIsPlaying(false);
     } else {
       multitrack.current?.play();
       setIsPlaying(true);
     }
-  }, [audioTracks.length]);
+  }, [trackStates.length]);
 
   const zoomHandler = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newZoom = Number(event.target.value);
+      setZoom(newZoom);
       if (multitrack.current) {
-        multitrack.current.zoom(Number(event.target.value));
-        setZoom(Number(event.target.value));
+        multitrack.current.zoom(newZoom);
       }
     },
     [],
   );
 
-  const volumeHandler = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (multitrack.current) {
-        audioTracks.forEach((_, index) => {
-          multitrack.current!.setTrackVolume(
-            index,
-            Number(event.target.value) / 100,
-          );
-        });
+  // New per-track control functions
+  const setTrackVolume = useCallback((trackId: string, volume: number) => {
+    if (multitrack.current) {
+      const trackIndex = trackStates.findIndex(ts => ts.id === trackId);
+      if (trackIndex !== -1) {
+        multitrack.current.setTrackVolume(trackIndex, volume);
+        setTrackStates(prev => prev.map(ts => 
+          ts.id === trackId ? { ...ts, volume } : ts
+        ));
       }
-    },
-    [audioTracks],
-  );
+    }
+  }, [trackStates]);
+
+  const toggleTrackMute = useCallback((trackId: string) => {
+    if (multitrack.current) {
+      const trackIndex = trackStates.findIndex(ts => ts.id === trackId);
+      if (trackIndex !== -1) {
+        setTrackStates(prev => prev.map(ts => 
+          ts.id === trackId ? { ...ts, isMuted: !ts.isMuted } : ts
+        ));
+        
+        // Mute/unmute the track
+        const track = trackStates.find(ts => ts.id === trackId);
+        if (track) {
+          multitrack.current.setTrackVolume(trackIndex, track.isMuted ? track.volume : 0);
+        }
+      }
+    }
+  }, [trackStates]);
+
 
   const addTrackHandler = () => {
    inputRef.current?.click() 
@@ -106,18 +139,22 @@ function App() {
           iAudio
         </header>
         <div style={{width: '100%'}}>
-        {audioTracks.length >0 && (
+        {trackStates.length >0 && (
           <ControlPanel
-          volumeHandler={volumeHandler}
-          zoomHandler={zoomHandler}
           playPauseHandler={playPauseHandler}
+          zoomHandler={zoomHandler}
           isPlaying={isPlaying}
-          tracksLoaded={audioTracks.length > 0}
+          tracksLoaded={trackStates.length > 0}
+          currentZoom={zoom}
+          trackStates={trackStates}
+          onTrackVolumeChange={setTrackVolume}
+          onTrackMuteToggle={toggleTrackMute}
+          showPerTrackControls={true}
           />
         )}
         </div>
       </div>
-      {audioTracks.length === 0 && (
+      {trackStates.length === 0 && (
         <div
         className={styles.uploadPrompt}
         onClick={addTrackHandler}>
@@ -135,9 +172,8 @@ function App() {
         {/* To be used by wavesurfer library for displaying waves of uploaded audio files */}
         </div>
       </div>
-      
 
-      {audioTracks.length > 0 && (
+      {trackStates.length > 0 && (
         <div
           className={styles.addMoreTracksBtn}
           onClick={addTrackHandler}>
@@ -147,7 +183,5 @@ function App() {
     </DragAndDrop>
   );
 }
-
-
 
 export default App;
